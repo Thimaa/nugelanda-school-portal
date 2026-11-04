@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Student {
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password          String
+  age               Int
+  class             String    // e.g. "11-A"
+  admissionNumber   String    @unique
+  school            String
+  fatherName        String
+  motherName        String
+  role              String    @default("student")
+  
+  // --- NEW FIELDS ---
+  birthday          String?
+  gender            String?
+  fatherMobile      String?
+  motherMobile      String?
+  photoUrl          String?
+  // ------------------
+  
+  // Relationship for siblings
+  siblings          Sibling[] 
+  
+  createdAt         DateTime  @default(now())
+}
+
+model Sibling {
+  id                String  @id @default(uuid())
+  name              String
+  admissionNumber   String
+  
+  // Relationship to Student
+  student           Student @relation(fields: [studentId], references: [id])
+  studentId         String
+}
